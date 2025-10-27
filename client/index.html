@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>client</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+  function onTelegramAuth(user) {
+    console.log('Дані від Telegram Отримано (з index.html):', user);
+
+    fetch('/api/auth/telegram', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.token) {
+        console.log('✅ Успішний логін! Отримано токен:', data.token);
+        localStorage.setItem('token', data.token);
+        alert('Успішний вхід! Сторінка перезавантажиться.');
+        window.location.reload(); // Перезавантажуємо, щоб App.jsx підхопив юзера
+      } else {
+        console.error('❌ Помилка від сервера:', data.message);
+        alert(`Помилка: ${data.message}`);
+      }
+    })
+    .catch(error => {
+      console.error('❌ Помилка при запиті на сервер:', error);
+    });
+  }
+</script>
+  </body>
+</html>
